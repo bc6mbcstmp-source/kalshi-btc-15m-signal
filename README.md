@@ -1,40 +1,22 @@
-# Kalshi BTC 15-minute Signal Watcher
+# Kalshi BTC 15-minute signal dashboard (iPhone setup)
 
-This starter bot streams BTC/USDT 1-minute candles from Binance public market data and polls Kalshi's public API for the active `KXBTC15M` market. It displays an UP, DOWN, or NO TRADE indicator signal.
+This project gives you a mobile-friendly dashboard. It uses public BTC/USDT 1-minute candles and polls Kalshi's public market endpoint for a currently open `KXBTC15M` series contract. It only displays signals; it does not submit trades.
 
-## Important limitations
-- This is a starter indicator, not a proven trading strategy or financial advice.
-- It does **not** place orders. It does not need Kalshi credentials.
-- The indicator score is not a calibrated probability or a promise of accuracy.
-- The external BTC/USDT feed may differ from the exact price source or settlement rule used by a Kalshi contract. Verify the specific contract's rules before relying on the signal.
-- Public API fields and market availability can change; if the active market isn't found, the script deliberately says it is unconfirmed rather than inventing a ticker.
-- Test and measure outcomes before risking money.
+## Deploy from iPhone using GitHub + Render
 
-## Install
-Python 3.10+ recommended.
+1. In Safari, sign in to GitHub or create an account.
+2. Create a new **public** repository named `kalshi-btc-15m-signal`. (Public is easiest for a basic free deployment; this code contains no secrets.)
+3. Upload these three files at the repository root: `app.py`, `requirements.txt`, and `render.yaml`. You can use GitHub's web interface to add each file.
+4. Sign in to Render in Safari and choose **New → Blueprint** (or deploy a new web service from the GitHub repository, if Blueprint is not shown).
+5. Connect `kalshi-btc-15m-signal` and approve deployment. Render reads `render.yaml`, installs dependencies, and starts the dashboard.
+6. When deployment finishes, open the Render-provided `https://...onrender.com` URL on your iPhone. Save it to the Home Screen using Safari's Share → Add to Home Screen.
+7. Keep your Kalshi market open on your computer and use the phone dashboard as a separate signal monitor.
 
-```bash
-python -m venv .venv
-# macOS/Linux:
-source .venv/bin/activate
-# Windows PowerShell:
-# .venv\Scripts\Activate.ps1
-
-pip install -r requirements.txt
-python kalshi_btc_15m_bot.py
-```
-
-Press Ctrl+C to stop. Non-NO-TRADE signals are logged to `signals.csv`.
-
-## How the signal works
-- EMA(5) vs EMA(13) trend
-- 1-minute and 5-minute momentum
-- RSI(14) extreme-move filter
-- Requires at least 2 of 3 directional checks to agree
-- Returns NO TRADE when signals conflict or RSI suggests an extended move
-
-## Next steps for a more serious version
-1. Compare predictions against actual Kalshi settlements and report hit rate by time remaining.
-2. Use the exact contract's official reference/settlement price rather than assuming another exchange's BTC price is identical.
-3. Include Kalshi bid/ask spread, fees, liquidity, and implied probability in any decision rule.
-4. Keep paper trading and add risk limits before considering order execution.
+## Important
+- Render's free service may sleep when idle and take time to wake. Free-tier features/pricing can change; check Render's current plan details before relying on it.
+- The app fetches public data when the dashboard refreshes every five seconds; a server may be throttled by upstream APIs.
+- It defaults to series ticker `KXBTC15M`. If no active market appears, verify the current series/market ticker in Kalshi's public API or market UI; do not assume the contract was found.
+- The BTC/USDT market feed may not match the exact settlement reference used by the Kalshi contract.
+- Signal score (−3 to +3) is a rule-based indicator, not a calibrated probability or guarantee. It has not been backtested.
+- This version has no order execution, no API keys, and no account connection.
+- Check the market's exact rules, reference price, closing time, fees, spread, and liquidity before making any manual trade.
